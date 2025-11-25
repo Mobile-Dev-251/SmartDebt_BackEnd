@@ -1,8 +1,8 @@
-import pool from "../config/db.js";
+import sql from "../config/db.js";
 import bcrypt from "bcrypt";
 export const getAllUsersService = async () => {
-  const result = await pool.query("SELECT * FROM users");
-  return result.rows;
+  const result = await sql`SELECT * FROM users`;
+  return result;
 };
 export const createNewUserService = async (data) => {
   try {
@@ -10,20 +10,18 @@ export const createNewUserService = async (data) => {
     const saltRounds = 10;
     const salt = bcrypt.genSaltSync(saltRounds);
     const password_hash = bcrypt.hashSync(password, salt);
-    const query = `
+
+    const result = await sql`
       INSERT INTO Users (
         full_name,
         email,
         phone,
         password_hash,
         avatar_url
-      ) VALUES ($1, $2, $3, $4, $5)
+      ) VALUES (${full_name}, ${email}, ${phone}, ${password_hash}, ${avatar_url})
       RETURNING user_id;
     `;
-
-    const values = [full_name, email, phone, password_hash, avatar_url];
-    const result = await pool.query(query, values);
-    return result.rows[0].user_id;
+    return result[0].user_id;
   } catch (error) {
     console.error("Error creating user:", error);
     throw error;

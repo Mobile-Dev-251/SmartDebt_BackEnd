@@ -1,19 +1,17 @@
-import pool from "../config/db.js";
+import sql from "../config/db.js";
 import bcrypt from "bcrypt";
 
 export const authLoginService = async (data) => {
   try {
     const { email, password } = data;
-    const { rows } = await pool.query("SELECT * FROM users WHERE email = $1", [
-      email,
-    ]);
-    if (rows.length === 0) {
+    const result = await sql`SELECT * FROM users WHERE email = ${email}`;
+    if (result.length === 0) {
       return {
         status: 400,
         message: "Email không tồn tại",
       };
     }
-    const user = rows[0];
+    const user = result[0];
     const match = await bcrypt.compare(password, user.password_hash);
     if (!match) {
       return {

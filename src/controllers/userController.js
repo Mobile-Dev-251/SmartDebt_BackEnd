@@ -13,7 +13,6 @@ export const getAllUsers = async (req, res) => {
 export const createNewUser = async (req, res) => {
   try {
     const data = req.body;
-    console.log("Data request ", req.body);
     const result = await createNewUserService(data);
     return res.status(200).json({
       user_id: result,
