@@ -13,7 +13,9 @@ app.use(express.urlencoded({ extended: true }));
 
 
 app.use("/api", userRoutes);
-
+app.get("/", (req, res) => {
+  return res.send("Hello From Smart Debt");
+});
 app.listen(port, () => {
   console.log("Server is running on http://localhost:" + port);
 });
