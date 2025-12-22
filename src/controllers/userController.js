@@ -10,6 +10,7 @@ export const getAllUsers = async (req, res) => {
     console.error(error);
   }
 };
+
 export const createNewUser = async (req, res) => {
   try {
     const data = req.body;
