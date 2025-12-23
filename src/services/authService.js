@@ -1,5 +1,9 @@
 import sql from "../config/db.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export const authLoginService = async (data) => {
   try {
@@ -19,15 +23,33 @@ export const authLoginService = async (data) => {
         message: "Mật khẩu không đúng!",
       };
     }
+
+    const payload = {
+      id: user.id,
+      email: user.email,
+    };
+
+    const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: "1d",
+    });
+
+    const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
+      expiresIn: "7d",
+    });
+
     return {
       status: 200,
       message: "Đăng nhập thành công!",
       data: {
-        id: user.user_id,
-        full_name: user.full_name,
-        email: user.email,
-        phone: user.phone,
-        avatar_url: user.avatar_url,
+        user: {
+          id: user.id,
+          full_name: user.name,
+          email: user.email,
+          phone: user.phone,
+          avatar_url: user.avatar_url,
+        },
+        accessToken,
+        refreshToken,
       },
     };
   } catch (error) {

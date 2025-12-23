@@ -5,7 +5,10 @@ import {
 export const getAllUsers = async (req, res) => {
   try {
     const users = await getAllUsersService();
-    return res.send(users);
+    return res.send({
+      authorizeId: req.user.id,
+      users: users,
+    });
   } catch (error) {
     console.error(error);
   }

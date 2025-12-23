@@ -6,6 +6,7 @@ import {
     updateContact,
     deleteContact,
 } from "../controllers/contactController.js";
+import { verifyToken } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
@@ -26,18 +27,13 @@ router.get("/", getAllContacts);
 
 /**
  * @swagger
- * /contacts/{id}:
+ * /contacts/my-contacts:
  *   get:
  *     summary: Lấy thông tin liên hệ theo ID
  *     tags:
  *       - Contact
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: ID của liên hệ
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Lấy thông tin liên hệ thành công
@@ -46,7 +42,7 @@ router.get("/", getAllContacts);
  *       500:
  *         description: Lỗi máy chủ nội bộ
  */
-router.get("/:id", getContactById);
+router.get("/my-contacts", verifyToken, getContactById);
 
 /**
  * @swagger

@@ -18,7 +18,7 @@ export const getAllContacts = async (req, res) => {
 
 export const getContactById = async (req, res) => {
     try {
-        const { id } = req.params;
+        const id = req.user.id;
         const contact = await getContactByIdService(id);
         if (!contact) {
             return res.status(404).json({ error: "Contact not found" });

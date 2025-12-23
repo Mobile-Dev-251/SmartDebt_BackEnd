@@ -6,8 +6,9 @@ export const getAllContactsService = async () => {
 };
 
 export const getContactByIdService = async (id) => {
-    const result = await sql`SELECT * FROM contacts WHERE id = ${id}`;
-    return result[0];
+    const result =
+      await sql`SELECT phone, email, user_id_contact, note, name FROM contacts WHERE user_id = ${id}`;
+    return result;
 };
 
 export const createContactService = async (data) => {
