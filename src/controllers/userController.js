@@ -15,8 +15,8 @@ export const createNewUser = async (req, res) => {
   try {
     const data = req.body;
     const result = await createNewUserService(data);
-    return res.status(200).json({
-      user_id: result,
+    return res.status(result.status).json({
+      message: result.message,
     });
   } catch (error) {
     console.error(error);

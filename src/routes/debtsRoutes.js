@@ -12,13 +12,13 @@ import {
 
 const router = express.Router();
 
-router.get("/debts", getAllDebts);
-router.get("/debts/:id", getDebtById);
-router.post("/debts", createDebt);
-router.put("/debts/:id", updateDebt);
-router.delete("/debts/:id", deleteDebt);
-router.patch("/debts/:id/mark-paid", markDebtAsPaid);
-router.get("/debts/:id/payments", getDebtPayments);
-router.post("/debts/:id/payments", createDebtPayment);
+router.get("/", getAllDebts);
+router.get("/:id", getDebtById);
+router.post("/", createDebt);
+router.put("/:id", updateDebt);
+router.delete("/:id", deleteDebt);
+router.patch("/:id/mark-paid", markDebtAsPaid);
+router.get("/:id/payments", getDebtPayments);
+router.post("/:id/payments", createDebtPayment);
 
 export default router;

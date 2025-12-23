@@ -1,9 +1,20 @@
+import { getAllUsers } from "../controllers/userController.js";
 import express from "express";
-import { getAllUsers, createNewUser } from "../controllers/userController.js";
-import { handleAuthLogin } from "../controllers/authController.js";
-const router = express.Router();
 
-router.get("/users", getAllUsers);
-router.post("/login", handleAuthLogin);
-router.post("/create-new-user", createNewUser);
+const router = express.Router();
+/**
+ * @swagger
+ * /users:
+ *   get:
+ *     summary: Lấy danh sách tất cả người dùng
+ *     tags:
+ *       - User
+ *     responses:
+ *       200:
+ *         description: Lấy danh sách người dùng thành công
+ *       400:
+ *         description: Lỗi không tìm thấy người dùng
+ */
+router.get("/", getAllUsers);
+
 export default router;
