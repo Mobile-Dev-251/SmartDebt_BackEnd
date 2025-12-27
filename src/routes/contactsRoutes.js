@@ -1,10 +1,9 @@
 import express from "express";
 import {
-    getAllContacts,
-    getContactById,
-    createContact,
-    updateContact,
-    deleteContact,
+  getAllContacts,
+  getContactById,
+  updateContact,
+  deleteContact,
 } from "../controllers/contactController.js";
 import { verifyToken } from "../middlewares/authMiddleware.js";
 
@@ -44,36 +43,36 @@ router.get("/", getAllContacts);
  */
 router.get("/my-contacts", verifyToken, getContactById);
 
-/**
- * @swagger
- * /contacts:
- *   post:
- *     summary: Tạo liên hệ mới
- *     tags:
- *       - Contact
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               phone:
- *                 type: string
- *               note:
- *                 type: string
- *             required:
- *               - name
- *               - phone
- *     responses:
- *       201:
- *         description: Tạo liên hệ thành công
- *       400:
- *         description: Dữ liệu không hợp lệ
- */
-router.post("/", createContact);
+// /**
+//  * @swagger
+//  * /contacts:
+//  *   post:
+//  *     summary: Tạo liên hệ mới
+//  *     tags:
+//  *       - Contact
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             properties:
+//  *               name:
+//  *                 type: string
+//  *               phone:
+//  *                 type: string
+//  *               note:
+//  *                 type: string
+//  *             required:
+//  *               - name
+//  *               - phone
+//  *     responses:
+//  *       201:
+//  *         description: Tạo liên hệ thành công
+//  *       400:
+//  *         description: Dữ liệu không hợp lệ
+//  */
+// router.post("/", createContact);
 
 /**
  * @swagger

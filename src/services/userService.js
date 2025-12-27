@@ -69,3 +69,17 @@ export const createNewUserService = async (data) => {
     throw error;
   }
 };
+
+export const updatePushTokenService = async (userId, token) => {
+  try {
+    const result = await sql`
+      UPDATE users
+      SET expo_push_token = ${token}
+      WHERE id = ${userId}
+    `;
+    return "Expo push token updated";
+  } catch (error) {
+    console.error("Error updating push token:", error);
+    throw error;
+  }
+};

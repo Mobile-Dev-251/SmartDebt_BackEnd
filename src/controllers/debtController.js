@@ -36,7 +36,8 @@ export const getDebtById = async (req, res) => {
 export const createDebt = async (req, res) => {
     try {
         const data = req.body;
-        const result = await createDebtService(data);
+        const userId = req.user.id;
+        const result = await createDebtService(userId, data);
         return res.status(201).json({
             debt_id: result,
         });

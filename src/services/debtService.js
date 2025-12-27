@@ -1,28 +1,41 @@
 import sql from "../config/db.js";
-
+import { createContactService } from "./contactService.js";
 export const getAllDebtsService = async () => {
-    const result = await sql`SELECT * FROM debts`;
-    return result;
+  const result = await sql`SELECT * FROM debts`;
+  return result;
 };
 
 export const getDebtByIdService = async (id) => {
-    const result = await sql`SELECT * FROM debts WHERE id = ${id}`;
-    return result[0];
+  const result = await sql`SELECT * FROM debts WHERE id = ${id}`;
+  return result[0];
 };
 
-export const createDebtService = async (data) => {
-    try {
-        const { contact_id, type, title, amount, due_date, note } = data;
-        const result = await sql`
-      INSERT INTO debts (contact_id, type, title, amount, due_date, note)
-      VALUES (${contact_id}, ${type}, ${title}, ${amount}, ${due_date}, ${note})
+export const createDebtService = async (userId, data) => {
+  try {
+    const {
+      borrower_id,
+      type,
+      title,
+      amount,
+      due_date,
+      remind_before,
+      note,
+      isSaved,
+    } = data;
+    const result = await sql`
+      INSERT INTO debts (lender_id, borrower_id, type, title, amount, due_date, remind_before, note)
+      VALUES (${userId}, ${borrower_id}, ${type}, ${title}, ${amount}, ${due_date}, ${remind_before}, ${note})
       RETURNING id;
     `;
-        return result[0].id;
-    } catch (error) {
-        console.error("Error creating debt:", error);
-        throw error;
+    if (isSaved) {
+      await createContactService(userId, borrower_id);
     }
+
+    return result[0].id;
+  } catch (error) {
+    console.error("Error creating debt:", error);
+    throw error;
+  }
 };
 
 export const updateDebtService = async (id, data) => {

@@ -1,9 +1,8 @@
 import {
-    getAllContactsService,
-    getContactByIdService,
-    createContactService,
-    updateContactService,
-    deleteContactService,
+  getAllContactsService,
+  getContactByIdService,
+  updateContactService,
+  deleteContactService,
 } from "../services/contactService.js";
 
 export const getAllContacts = async (req, res) => {
@@ -30,20 +29,20 @@ export const getContactById = async (req, res) => {
     }
 };
 
-export const createContact = async (req, res) => {
-    try {
-        const data = req.body;
-        const result = await createContactService(data);
-        return res.status(201).json({
-            contact_id: result,
-        });
-    } catch (error) {
-        console.error(error);
-        return res.status(400).json({
-            error: error.message,
-        });
-    }
-};
+// export const createContact = async (req, res) => {
+//     try {
+//         const data = req.body;
+//         const result = await createContactService(data);
+//         return res.status(201).json({
+//             contact_id: result,
+//         });
+//     } catch (error) {
+//         console.error(error);
+//         return res.status(400).json({
+//             error: error.message,
+//         });
+//     }
+// };
 
 export const updateContact = async (req, res) => {
     try {
