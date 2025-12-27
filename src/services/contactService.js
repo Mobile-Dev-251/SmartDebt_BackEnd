@@ -1,13 +1,7 @@
 import sql from "../config/db.js";
 
-export const getAllContactsService = async () => {
-  const result = await sql`SELECT * FROM contacts`;
-  return result;
-};
-
-export const getContactByIdService = async (id) => {
-  const result =
-    await sql`SELECT phone, email, user_id_contact, note, name FROM contacts WHERE user_id = ${id}`;
+export const getAllContactsService = async (userId) => {
+  const result = await sql`SELECT * FROM contacts WHERE user_id = ${userId}`;
   return result;
 };
 
@@ -31,25 +25,9 @@ export const createContactService = async (userId, userContactId) => {
   }
 };
 
-export const updateContactService = async (id, data) => {
+export const deleteContactService = async (userId, deleteId) => {
   try {
-    const { name, phone, note } = data;
-    const result = await sql`
-      UPDATE contacts
-      SET name = ${name}, phone = ${phone}, note = ${note}
-      WHERE id = ${id}
-      RETURNING *;
-    `;
-    return result[0];
-  } catch (error) {
-    console.error("Error updating contact:", error);
-    throw error;
-  }
-};
-
-export const deleteContactService = async (id) => {
-  try {
-    await sql`DELETE FROM contacts WHERE id = ${id}`;
+    await sql`DELETE FROM contacts WHERE user_id = ${userId} AND user_id_contact = ${deleteId}`;
     return true;
   } catch (error) {
     console.error("Error deleting contact:", error);

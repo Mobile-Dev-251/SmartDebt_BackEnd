@@ -1,8 +1,6 @@
 import express from "express";
 import {
   getAllContacts,
-  getContactById,
-  updateContact,
   deleteContact,
 } from "../controllers/contactController.js";
 import { verifyToken } from "../middlewares/authMiddleware.js";
@@ -12,21 +10,6 @@ const router = express.Router();
 /**
  * @swagger
  * /contacts:
- *   get:
- *     summary: Lấy danh sách tất cả liên hệ
- *     tags:
- *       - Contact
- *     responses:
- *       200:
- *         description: Lấy danh sách liên hệ thành công
- *       500:
- *         description: Lỗi máy chủ nội bộ
- */
-router.get("/", getAllContacts);
-
-/**
- * @swagger
- * /contacts/my-contacts:
  *   get:
  *     summary: Lấy thông tin liên hệ theo ID
  *     tags:
@@ -41,7 +24,7 @@ router.get("/", getAllContacts);
  *       500:
  *         description: Lỗi máy chủ nội bộ
  */
-router.get("/my-contacts", verifyToken, getContactById);
+router.get("/", verifyToken, getAllContacts);
 
 // /**
 //  * @swagger
@@ -76,54 +59,16 @@ router.get("/my-contacts", verifyToken, getContactById);
 
 /**
  * @swagger
- * /contacts/{id}:
- *   put:
- *     summary: Cập nhật thông tin liên hệ
- *     tags:
- *       - Contact
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: ID của liên hệ
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               phone:
- *                 type: string
- *               note:
- *                 type: string
- *             required:
- *               - name
- *               - phone
- *     responses:
- *       200:
- *         description: Cập nhật liên hệ thành công
- *       400:
- *         description: Dữ liệu không hợp lệ
- *       404:
- *         description: Không tìm thấy liên hệ
- */
-router.put("/:id", updateContact);
-
-/**
- * @swagger
- * /contacts/{id}:
+ * /contacts/{deleteId}:
  *   delete:
  *     summary: Xóa liên hệ
  *     tags:
  *       - Contact
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: deleteId
  *         required: true
  *         schema:
  *           type: string
@@ -134,7 +79,7 @@ router.put("/:id", updateContact);
  *       500:
  *         description: Lỗi máy chủ nội bộ
  */
-router.delete("/:id", deleteContact);
+router.delete("/:deleteId", verifyToken, deleteContact);
 
 
 export default router;
