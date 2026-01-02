@@ -1,17 +1,16 @@
 import {
-  getAllUsersService,
+  getMyProfileService,
   createNewUserService,
   updatePushTokenService,
 } from "../services/userService.js";
-export const getAllUsers = async (req, res) => {
+export const getMyProfile = async (req, res) => {
   try {
-    const users = await getAllUsersService();
-    return res.send({
-      authorizeId: req.user.id,
-      users: users,
-    });
+    const userId = req.user.id;
+    const profile = await getMyProfileService(userId);
+    return res.status(200).send({ profile });
   } catch (error) {
     console.error(error);
+    return res.status(400).json({ error: "Cannot get user profile" });
   }
 };
 

@@ -1,6 +1,5 @@
 import {
     getAllDebtsService,
-    getDebtByIdService,
     createDebtService,
     updateDebtService,
     deleteDebtService,
@@ -10,28 +9,16 @@ import {
 } from "../services/debtService.js";
 
 export const getAllDebts = async (req, res) => {
-    try {
-        const debts = await getAllDebtsService();
-        return res.send(debts);
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: "Internal server error" });
-    }
+  try {
+    const userId = req.user.id;
+    const debts = await getAllDebtsService(userId);
+    return res.send(debts);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
 };
 
-export const getDebtById = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const debt = await getDebtByIdService(id);
-        if (!debt) {
-            return res.status(404).json({ error: "Debt not found" });
-        }
-        return res.send(debt);
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: "Internal server error" });
-    }
-};
 
 export const createDebt = async (req, res) => {
     try {

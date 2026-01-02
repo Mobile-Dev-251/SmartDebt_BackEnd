@@ -1,8 +1,13 @@
 import sql from "../config/db.js";
 import bcrypt from "bcrypt";
-export const getAllUsersService = async () => {
-  const result = await sql`SELECT * FROM users`;
-  return result;
+export const getMyProfileService = async (userId) => {
+  try {
+    const result =
+      await sql`SELECT id, name, email, phone, avatar_url FROM users WHERE id = ${userId}`;
+    return result;
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
+  }
 };
 function valid(email) {
   const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

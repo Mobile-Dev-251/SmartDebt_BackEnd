@@ -71,7 +71,7 @@ router.get("/", verifyToken, getAllContacts);
  *         name: deleteId
  *         required: true
  *         schema:
- *           type: string
+ *           type: integer
  *         description: ID của liên hệ
  *     responses:
  *       204:

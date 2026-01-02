@@ -1,24 +1,26 @@
-import { getAllUsers, updatePushToken } from "../controllers/userController.js";
+import {
+  getMyProfile,
+  updatePushToken,
+} from "../controllers/userController.js";
 import express from "express";
 import { verifyToken } from "../middlewares/authMiddleware.js";
 const router = express.Router();
 /**
  * @swagger
- * /users:
+ * /users/my-profile:
  *   get:
- *     summary: Lấy danh sách tất cả người dùng
+ *     summary: Lấy thông tin người dùng
  *     tags:
  *       - User
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Lấy danh sách người dùng thành công
+ *         description: Lấy thông tin người dùng thành công
  *       400:
  *         description: Lỗi không tìm thấy người dùng
  */
-router.get("/", verifyToken, getAllUsers);
-
+router.get("/my-profile", verifyToken, getMyProfile);
 /**
  * @swagger
  * /users/update-push-token:
@@ -43,5 +45,5 @@ router.get("/", verifyToken, getAllUsers);
  *       400:
  *         description: Dữ liệu không hợp lệ
  */
-router.post("/update-push-token", verifyToken, updatePushToken)
+router.post("/update-push-token", verifyToken, updatePushToken);
 export default router;

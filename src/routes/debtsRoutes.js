@@ -2,19 +2,34 @@ import express from "express";
 import { verifyToken } from "../middlewares/authMiddleware.js";
 import {
   getAllDebts,
-  getDebtById,
   createDebt,
   updateDebt,
   deleteDebt,
-  markDebtAsPaid,
-  getDebtPayments,
-  createDebtPayment,
 } from "../controllers/debtController.js";
 
 const router = express.Router();
 
-router.get("/", getAllDebts);
-router.get("/:id", getDebtById);
+/**
+ * @swagger
+ * /debts:
+ *   get:
+ *     summary: Lấy tất cả các khoản nợ/cho vay của người dùng
+ *     description: |
+ *       Lấy danh sách tất cả các khoản nợ và cho vay liên quan đến người dùng.
+ *     tags:
+ *       - Debts
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lấy thông tin khoản nợ/cho vay thành công
+ *       404:
+ *         description: Không tìm thấy khoản nợ/cho vay
+ *       500:
+ *         description: Lỗi máy chủ nội bộ
+ */
+router.get("/", verifyToken, getAllDebts);
+
 /**
  * @swagger
  * /debts:
@@ -74,8 +89,8 @@ router.get("/:id", getDebtById);
 router.post("/", verifyToken, createDebt);
 router.put("/:id", updateDebt);
 router.delete("/:id", deleteDebt);
-router.patch("/:id/mark-paid", markDebtAsPaid);
-router.get("/:id/payments", getDebtPayments);
-router.post("/:id/payments", createDebtPayment);
+// router.patch("/:id/mark-paid", markDebtAsPaid);
+// router.get("/:id/payments", getDebtPayments);
+// router.post("/:id/payments", createDebtPayment);
 
 export default router;

@@ -9,6 +9,7 @@ import debtRoutes from "./routes/debtsRoutes.js";
 import expenseRoutes from "./routes/expenseRoutes.js";
 import contactRoutes from "./routes/contactsRoutes.js";
 import categoryRoutes from "./routes/categoriesRoutes.js";
+import groupRoutes from "./routes/groupRoutes.js";
 import sql from "./config/db.js";
 import initReminderWorker from "./workers/reminderWorker.js";
 
@@ -56,6 +57,7 @@ app.use("/users", userRoutes);
 app.use("/debts", debtRoutes);
 app.use("/expenses", expenseRoutes);
 app.use("/contacts", contactRoutes);
+app.use("/groups", groupRoutes);
 app.use("/categories", categoryRoutes);
 //initReminderWorker(sql);
 app.listen(port, () => {
