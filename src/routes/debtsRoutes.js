@@ -1,240 +1,92 @@
 import express from "express";
+import { verifyToken } from "../middlewares/authMiddleware.js";
 import {
-    getAllDebts,
-    getDebtById,
-    createDebt,
-    updateDebt,
-    deleteDebt,
-    markDebtAsPaid,
-    getDebtPayments,
-    createDebtPayment,
+  getAllDebts,
+  createDebt,
+  updateDebt,
+  deleteDebt,
 } from "../controllers/debtController.js";
 
 const router = express.Router();
 
 /**
  * @swagger
- * components:
- *   schemas:
- *     Debt:
- *       type: object
- *       properties:
- *         id:
- *           type: integer
- *           description: ID nợ
- *         contact_id:
- *           type: integer
- *           description: ID liên hệ
- *         type:
- *           type: string
- *           description: "Loại nợ (ví dụ: nợ phải trả, nợ phải thu)"
- *         title:
- *           type: string
- *           description: Tiêu đề nợ
- *         amount:
- *           type: number
- *           description: Số tiền nợ
- *         due_date:
- *           type: string
- *           format: date
- *           description: Ngày đáo hạn
- *         note:
- *           type: string
- *           description: Ghi chú bổ sung
- *         is_paid:
- *           type: boolean
- *           description: Nợ đã thanh toán chưa
- *       required:
- *         - id
- *         - contact_id
- *         - type
- *         - title
- *         - amount
- *         - due_date
- *         - is_paid
- *     Payment:
- *       type: object
- *       properties:
- *         id:
- *           type: integer
- *           description: ID thanh toán
- *         debt_id:
- *           type: integer
- *           description: ID nợ
- *         amount:
- *           type: number
- *           description: Số tiền thanh toán
- *         note:
- *           type: string
- *           description: Ghi chú bổ sung
- *       required:
- *         - id
- *         - debt_id
- *         - amount
- */
-
-/**
- * @swagger
  * /debts:
  *   get:
- *     summary: Lấy tất cả nợ
- *     tags: [Debts]
+ *     summary: Lấy tất cả các khoản nợ/cho vay của người dùng
+ *     description: |
+ *       Lấy danh sách tất cả các khoản nợ và cho vay liên quan đến người dùng.
+ *     tags:
+ *       - Debts
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Danh sách nợ
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Debt'
- *       500:
- *         description: Lỗi máy chủ nội bộ
- */
-router.get("/", getAllDebts);
-
-/**
- * @swagger
- * /debts/{id}:
- *   get:
- *     summary: Lấy nợ theo ID
- *     tags: [Debts]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID nợ
- *     responses:
- *       200:
- *         description: Dữ liệu nợ
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Debt'
+ *         description: Lấy thông tin khoản nợ/cho vay thành công
  *       404:
- *         description: Không tìm thấy nợ
+ *         description: Không tìm thấy khoản nợ/cho vay
  *       500:
  *         description: Lỗi máy chủ nội bộ
  */
-router.get("/:id", getDebtById);
+router.get("/", verifyToken, getAllDebts);
 
 /**
  * @swagger
  * /debts:
  *   post:
- *     summary: Tạo nợ mới
- *     tags: [Debts]
+ *     summary: Tạo một khoản nợ mới
+ *     description: |
+ *       Tạo khoản nợ mới.
+ *     tags:
+ *       - Debts
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - borrower_id
+ *               - amount
+ *               - due_date
  *             properties:
- *               contact_id:
+ *               borrower_id:
  *                 type: integer
- *                 description: ID liên hệ
  *               type:
  *                 type: string
- *                 description: Loại nợ
+ *                 enum: [Ăn uống, Học tập, Sinh hoạt, Khác]
  *               title:
  *                 type: string
- *                 description: Tiêu đề nợ
  *               amount:
  *                 type: number
- *                 description: Số tiền nợ
+ *                 format: float
  *               due_date:
  *                 type: string
  *                 format: date
- *                 description: Ngày đáo hạn
+ *               remind_before:
+ *                 type: integer
+ *                 description: Số ngày trước hạn để nhắc nhở
  *               note:
  *                 type: string
- *                 description: Ghi chú bổ sung
- *             required:
- *               - contact_id
- *               - type
- *               - title
- *               - amount
- *               - due_date
+ *               isSaved:
+ *                 type: boolean
  *     responses:
  *       201:
- *         description: Tạo nợ thành công
+ *         description: Tạo khoản nợ thành công
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 debt_id:
+ *                 id:
  *                   type: integer
- *                   description: ID nợ đã tạo
+ *                   example: 10
  *       400:
- *         description: Yêu cầu không hợp lệ
- *       500:
- *         description: Lỗi máy chủ nội bộ
+ *         description: Lỗi yêu cầu không hợp lệ
  */
-router.post("/", createDebt);
-
-/**
- * @swagger
- * /debts/{id}:
- *   put:
- *     summary: Cập nhật nợ
- *     tags: [Debts]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID nợ
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               contact_id:
- *                 type: integer
- *                 description: ID liên hệ
- *               type:
- *                 type: string
- *                 description: Loại nợ
- *               title:
- *                 type: string
- *                 description: Tiêu đề nợ
- *               amount:
- *                 type: number
- *                 description: Số tiền nợ
- *               due_date:
- *                 type: string
- *                 format: date
- *                 description: Ngày đáo hạn
- *               note:
- *                 type: string
- *                 description: Ghi chú bổ sung
- *             required:
- *               - contact_id
- *               - type
- *               - title
- *               - amount
- *               - due_date
- *     responses:
- *       200:
- *         description: Cập nhật nợ thành công
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Debt'
- *       404:
- *         description: Không tìm thấy nợ
- *       400:
- *         description: Yêu cầu không hợp lệ
- *       500:
- *         description: Lỗi máy chủ nội bộ
- */
+router.post("/", verifyToken, createDebt);
 router.put("/:id", updateDebt);
 
 /**
@@ -257,107 +109,8 @@ router.put("/:id", updateDebt);
  *         description: Lỗi máy chủ nội bộ
  */
 router.delete("/:id", deleteDebt);
-
-/**
- * @swagger
- * /debts/{id}/mark-paid:
- *   patch:
- *     summary: Đánh dấu nợ đã thanh toán
- *     tags: [Debts]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID nợ
- *     responses:
- *       200:
- *         description: Nợ đã được đánh dấu thanh toán
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Debt'
- *       404:
- *         description: Không tìm thấy nợ
- *       400:
- *         description: Yêu cầu không hợp lệ
- *       500:
- *         description: Lỗi máy chủ nội bộ
- */
-router.patch("/:id/mark-paid", markDebtAsPaid);
-
-/**
- * @swagger
- * /debts/{id}/payments:
- *   get:
- *     summary: Lấy thanh toán cho nợ
- *     tags: [Debts]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID nợ
- *     responses:
- *       200:
- *         description: Danh sách thanh toán
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Payment'
- *       500:
- *         description: Lỗi máy chủ nội bộ
- */
-router.get("/:id/payments", getDebtPayments);
-
-/**
- * @swagger
- * /debts/{id}/payments:
- *   post:
- *     summary: Tạo thanh toán cho nợ
- *     tags: [Debts]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID nợ
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               amount:
- *                 type: number
- *                 description: Số tiền thanh toán
- *               note:
- *                 type: string
- *                 description: Ghi chú bổ sung
- *             required:
- *               - amount
- *     responses:
- *       201:
- *         description: Tạo thanh toán thành công
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 payment_id:
- *                   type: integer
- *                   description: ID thanh toán đã tạo
- *       400:
- *         description: Yêu cầu không hợp lệ
- *       500:
- *         description: Lỗi máy chủ nội bộ
- */
-router.post("/:id/payments", createDebtPayment);
+// router.patch("/:id/mark-paid", markDebtAsPaid);
+// router.get("/:id/payments", getDebtPayments);
+// router.post("/:id/payments", createDebtPayment);
 
 export default router;

@@ -1,8 +1,13 @@
 import sql from "../config/db.js";
 import bcrypt from "bcrypt";
-export const getAllUsersService = async () => {
-  const result = await sql`SELECT * FROM users`;
-  return result;
+export const getMyProfileService = async (userId) => {
+  try {
+    const result =
+      await sql`SELECT id, name, email, phone, avatar_url FROM users WHERE id = ${userId}`;
+    return result;
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
+  }
 };
 function valid(email) {
   const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -66,6 +71,20 @@ export const createNewUserService = async (data) => {
     };
   } catch (error) {
     console.error("Error creating user:", error);
+    throw error;
+  }
+};
+
+export const updatePushTokenService = async (userId, token) => {
+  try {
+    const result = await sql`
+      UPDATE users
+      SET expo_push_token = ${token}
+      WHERE id = ${userId}
+    `;
+    return "Expo push token updated";
+  } catch (error) {
+    console.error("Error updating push token:", error);
     throw error;
   }
 };
