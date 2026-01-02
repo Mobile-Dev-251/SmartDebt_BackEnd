@@ -88,6 +88,26 @@ router.get("/", verifyToken, getAllDebts);
  */
 router.post("/", verifyToken, createDebt);
 router.put("/:id", updateDebt);
+
+/**
+ * @swagger
+ * /debts/{id}:
+ *   delete:
+ *     summary: Xóa nợ
+ *     tags: [Debts]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID nợ
+ *     responses:
+ *       204:
+ *         description: Xóa nợ thành công
+ *       500:
+ *         description: Lỗi máy chủ nội bộ
+ */
 router.delete("/:id", deleteDebt);
 // router.patch("/:id/mark-paid", markDebtAsPaid);
 // router.get("/:id/payments", getDebtPayments);
