@@ -28,7 +28,12 @@ const swaggerOptions = {
     },
     servers: [
       {
+        url: "https://app-nodejs-smartdebt-backend-f5a5f6d5fteddea8.eastasia-01.azurewebsites.net", // URL thực tế trên Azure
+        description: "Production server",
+      },
+      {
         url: `http://localhost:${port}`,
+        description: "Local development server",
       },
     ],
     components: {
@@ -49,7 +54,13 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 // -----------------------
 
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: "*", //
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/auth", authRoutes);
