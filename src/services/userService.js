@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 export const getMyProfileService = async (userId) => {
   try {
     const result =
-      await sql`SELECT id, name, email, phone, avatar_url FROM users WHERE id = ${userId}`;
+      await sql`SELECT id, name, email, phone, balance, avatar_url FROM users WHERE id = ${userId}`;
     return result;
   } catch (error) {
     console.error("Error fetching user profile:", error);
@@ -71,6 +71,46 @@ export const createNewUserService = async (data) => {
     };
   } catch (error) {
     console.error("Error creating user:", error);
+    throw error;
+  }
+};
+
+export const updateMyInfoService = async (userId, data) => {
+  try {
+    const { name, email, phone, balance, avatar_url } = data;
+    const result = await sql`
+      UPDATE users
+      SET name = ${name}, email = ${email}, phone = ${phone}, balance = ${balance}, avatar_url = ${avatar_url}
+      WHERE id = ${userId}
+    `;
+    return {
+      status: 200,
+      message: "User updated successfully",
+    };
+  } catch (error) {
+    console.error("Error updating user info:", error);
+    throw error;
+  }
+};
+
+export const getMyNotificationsService = async (userId) => {
+  try {
+    const result =
+      await sql`SELECT n.*, u.avatar_url FROM "notifications" n JOIN users u ON n.from_id = u.id WHERE n.user_id = ${userId}`;
+    return result;
+  } catch (error) {
+    console.error("Error getting notifications:", error);
+    throw error;
+  }
+};
+
+export const searchUserByPhoneService = async (phone) => {
+  try {
+    const result =
+      await sql`SELECT id, name, avatar_url FROM users WHERE phone LIKE '%' || ${phone} || '%' LIMIT 10`;
+    return result;
+  } catch (error) {
+    console.error("Error getting users:", error);
     throw error;
   }
 };

@@ -2,7 +2,10 @@ import express from "express";
 import { verifyToken } from "../middlewares/authMiddleware.js";
 import {
   getAllDebts,
+  getDebtById,
   createDebt,
+  borrowerConfirmDebt,
+  markDebtAsPaid,
   updateDebt,
   deleteDebt,
 } from "../controllers/debtController.js";
@@ -87,7 +90,84 @@ router.get("/", verifyToken, getAllDebts);
  *         description: Lỗi yêu cầu không hợp lệ
  */
 router.post("/", verifyToken, createDebt);
+
+/**
+ * @swagger
+ * /debts/{id}:
+ *   get:
+ *     summary: Lấy thông tin nợ theo ID
+ *     tags: [Debts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID nợ
+ *     responses:
+ *       200:
+ *         description: Lấy thông tin nợ thành công
+ *       404:
+ *         description: Không tìm thấy nợ
+ *       500:
+ *         description: Lỗi máy chủ nội bộ
+ */
+router.get("/:id", verifyToken, getDebtById);
+
 router.put("/:id", updateDebt);
+
+/**
+ * @swagger
+ * /debts/borrower-confirm/{debtId}:
+ *   put:
+ *     summary: Xac nhận đã trả nợ bởi người vay
+ *     tags: [Debts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: debtId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID nợ
+ *     responses:
+ *       200:
+ *         description: Xác nhận trả nợ thành công
+ *       404:
+ *         description: Không tìm thấy nợ
+ *       500:
+ *         description: Lỗi máy chủ nội bộ
+ */
+router.put("/borrower-confirm/:debtId", verifyToken, borrowerConfirmDebt);
+
+
+/**
+ * @swagger
+ * /debts/mark-paid/{debtId}:
+ *   put:
+ *     summary: Xac nhận đã trả nợ bởi người cho vay
+ *     tags: [Debts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: debtId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID nợ
+ *     responses:
+ *       200:
+ *         description: Xác nhận trả nợ thành công
+ *       400:
+ *         description: Không tìm thấy nợ
+ *       500:
+ *         description: Lỗi máy chủ nội bộ
+ */
+router.put("/mark-paid/:debtId", verifyToken, markDebtAsPaid);
 
 /**
  * @swagger

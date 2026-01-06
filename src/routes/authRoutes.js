@@ -49,6 +49,7 @@ router.post("/login", handleAuthLogin);
  *                 type: string
  *               phone:
  *                 type: string
+ *                 format: phone
  *               avatar_url:
  *                 type: string
  *               password:
