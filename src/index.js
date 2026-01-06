@@ -27,10 +27,10 @@ const swaggerOptions = {
       description: "API Documentation for SmartDebt Application",
     },
     servers: [
-      // {
-      //   url: "https://app-nodejs-smartdebt-backend-f5a5f6d5fteddea8.eastasia-01.azurewebsites.net", // URL thực tế trên Azure
-      //   description: "Production server",
-      // },
+      {
+        url: "https://app-nodejs-smartdebt-backend-f5a5f6d5fteddea8.eastasia-01.azurewebsites.net", // URL thực tế trên Azure
+        description: "Production server",
+      },
       {
         url: `http://localhost:${port}`,
         description: "Local development server",
@@ -74,3 +74,4 @@ app.use("/categories", categoryRoutes);
 app.listen(port, () => {
   console.log("Server is running on http://localhost:" + port);
 });
+
