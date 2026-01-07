@@ -96,7 +96,7 @@ export const updateMyInfoService = async (userId, data) => {
 export const getMyNotificationsService = async (userId) => {
   try {
     const result =
-      await sql`SELECT n.*, u.avatar_url FROM "notifications" n JOIN users u ON n.from_id = u.id WHERE n.user_id = ${userId}`;
+      await sql`SELECT n.*, u.avatar_url FROM "notifications" n JOIN users u ON n.from_id = u.id WHERE n.user_id = ${userId} ORDER BY n.created_at DESC`;
     return result;
   } catch (error) {
     console.error("Error getting notifications:", error);
@@ -126,5 +126,74 @@ export const updatePushTokenService = async (userId, token) => {
   } catch (error) {
     console.error("Error updating push token:", error);
     throw error;
+  }
+};
+
+export const markNotificationAsReadService = async (userId, notificationId) => {
+  try {
+    console.log('Marking notification as read:', { userId, notificationId });
+    // First check if the notification belongs to the user
+    const checkResult = await sql`
+      SELECT id FROM notifications 
+      WHERE id = ${notificationId} AND user_id = ${userId}
+    `;
+
+    if (checkResult.length === 0) {
+      return {
+        status: 404,
+        message: "Notification not found or does not belong to user",
+      };
+    }
+
+    // Cập nhật trường isRead thành true
+    const result = await sql`
+      UPDATE notifications 
+      SET is_read = true 
+      WHERE id = ${notificationId} AND user_id = ${userId}
+      RETURNING id;
+    `;
+
+    if (result.length === 0) {
+        return {
+            status: 404,
+            message: "Notification not found",
+        };
+    }
+
+    return {
+      status: 200,
+      message: "Notification marked as read",
+    };
+  } catch (error) {
+    console.error("Error marking notification as read:", error);
+    return {
+      status: 500,
+      message: "Database error",
+    };
+  }
+};
+
+export const markAllNotificationsAsReadService = async (userId) => {
+  try {
+    console.log('Marking all notifications as read for user:', userId);
+    // Update all unread notifications for the user
+    const result = await sql`
+      UPDATE notifications 
+      SET is_read = true 
+      WHERE user_id = ${userId} AND is_read = false
+      RETURNING id;
+    `;
+
+    console.log('Updated notifications:', result.length);
+    return {
+      status: 200,
+      message: `Marked ${result.length} notifications as read`,
+    };
+  } catch (error) {
+    console.error("Error marking all notifications as read:", error);
+    return {
+      status: 500,
+      message: "Database error",
+    };
   }
 };

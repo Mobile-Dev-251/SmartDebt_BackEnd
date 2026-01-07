@@ -5,6 +5,8 @@ import {
   updatePushTokenService,
   getMyNotificationsService,
   searchUserByPhoneService,
+  markNotificationAsReadService,
+  markAllNotificationsAsReadService,
 } from "../services/userService.js";
 export const getMyProfile = async (req, res) => {
   try {
@@ -88,6 +90,41 @@ export const updatePushToken = async (req, res) => {
     console.error(error);
     return res.status(400).json({
       error: error,
+    });
+  }
+};
+
+export const markNotificationAsRead = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const notificationId = req.params.id;
+    // Gọi service
+    const result = await markNotificationAsReadService(userId, notificationId);
+    
+    return res.status(result.status).json({
+      message: result.message,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      error: error.message || 'Internal server error',
+    });
+  }
+};
+
+export const markAllNotificationsAsRead = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    // Gọi service
+    const result = await markAllNotificationsAsReadService(userId);
+    
+    return res.status(result.status).json({
+      message: result.message,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      error: error.message || 'Internal server error',
     });
   }
 };

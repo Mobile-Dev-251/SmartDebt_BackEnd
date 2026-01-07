@@ -11,37 +11,6 @@ const router = express.Router();
 
 /**
  * @swagger
- * components:
- *   schemas:
- *     Expense:
- *       type: object
- *       properties:
- *         id:
- *           type: integer
- *           description: ID chi phí
- *         category_id:
- *           type: integer
- *           description: ID danh mục
- *         amount:
- *           type: number
- *           description: Số tiền chi phí
- *         description:
- *           type: string
- *           description: Mô tả chi phí
- *         date:
- *           type: string
- *           format: date
- *           description: Ngày chi phí
- *       required:
- *         - id
- *         - category_id
- *         - amount
- *         - description
- *         - date
- */
-
-/**
- * @swagger
  * /expenses:
  *   get:
  *     summary: Lấy tất cả chi phí
@@ -54,7 +23,19 @@ const router = express.Router();
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Expense'
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   category_id:
+ *                     type: integer
+ *                   amount:
+ *                     type: number
+ *                   description:
+ *                     type: string
+ *                   date:
+ *                     type: string
+ *                     format: date
  *       500:
  *         description: Lỗi máy chủ nội bộ
  */

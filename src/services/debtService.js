@@ -6,13 +6,13 @@ let expo = new Expo();
 
 export const getAllDebtsService = async (userId) => {
   const result =
-    await sql`SELECT * FROM debts WHERE lender_id = ${userId} OR borrower_id = ${userId}`;
+    await sql`SELECT d.*, d.amount as debt_amount, COALESCE(ge.total_amount, d.amount) as amount, b.name as borrower_name, l.name as lender_name FROM debts d LEFT JOIN group_expenses ge ON d.group_expense_id = ge.id JOIN users b ON d.borrower_id = b.id JOIN users l ON d.lender_id = l.id WHERE d.lender_id = ${userId} OR d.borrower_id = ${userId} ORDER BY d.created_at DESC`;
   return result;
 };
 
 export const getDebtByIdService = async (userId, debtId) => {
   const result =
-    await sql`SELECT * FROM debts WHERE (lender_id = ${userId} OR borrower_id = ${userId}) AND id = ${debtId}`;
+    await sql`SELECT d.*, COALESCE(ge.total_amount, d.amount) as amount, b.name as borrower_name, l.name as lender_name FROM debts d LEFT JOIN group_expenses ge ON d.group_expense_id = ge.id JOIN users b ON d.borrower_id = b.id JOIN users l ON d.lender_id = l.id WHERE (d.lender_id = ${userId} OR d.borrower_id = ${userId}) AND d.id = ${debtId}`;
   if (result.length === 0) {
     throw new Error("Debt not found or you do not have access to it");
   }
@@ -31,9 +31,26 @@ export const createDebtService = async (userId, data) => {
       note,
       isSaved,
     } = data;
+
+    // Xác định lender và borrower dựa trên type
+    let finalLenderId, finalBorrowerId;
+    if (type === 'muon') {
+      // "Mượn nợ": Người tạo là borrower, borrower_id (target) là lender
+      finalLenderId = borrower_id;
+      finalBorrowerId = userId;
+    } else if (type === 'cho_muon') {
+      // "Cho mượn": Người tạo là lender, borrower_id (target) là borrower
+      finalLenderId = userId;
+      finalBorrowerId = borrower_id;
+    } else {
+      // Default: userId là lender
+      finalLenderId = userId;
+      finalBorrowerId = borrower_id;
+    }
+
     const result = await sql`
       INSERT INTO debts (lender_id, borrower_id, type, title, amount, due_date, remind_before, note)
-      VALUES (${userId}, ${borrower_id}, ${type}, ${title}, ${amount}, ${due_date}, ${remind_before}, ${note})
+      VALUES (${finalLenderId}, ${finalBorrowerId}, ${type}, ${title}, ${amount}, ${due_date}, ${remind_before}, ${note})
       RETURNING id;
     `;
     if (isSaved) {
@@ -86,8 +103,13 @@ export const borrowerConfirmDebtService = async (userId, debtId) => {
             SET status = 'PENDING_CONFIRMATION_BY_LENDER' 
             WHERE id = ${debtId}
         `;
-    let tickets = await expo.sendPushNotificationsAsync([message]);
-    //console.log("Phản hồi từ Expo:", tickets);
+    try {
+      let tickets = await expo.sendPushNotificationsAsync([message]);
+      console.log("Push notification sent:", tickets);
+    } catch (pushError) {
+      console.warn("Failed to send push notification:", pushError);
+      // Don't throw, continue with notification insert
+    }
     await sql`
             INSERT INTO notifications (user_id, debt_id, from_id, title, body) 
             VALUES (${debt[0].lender_id}, ${debtId}, ${userId}, ${message.title}, ${message.body})
@@ -130,7 +152,13 @@ export const markDebtAsPaidService = async (userId, debtId) => {
             SET status = 'PAID' 
             WHERE id = ${debtId}
         `;
-    let tickets = await expo.sendPushNotificationsAsync([message]);
+    try {
+      let tickets = await expo.sendPushNotificationsAsync([message]);
+      console.log("Push notification sent:", tickets);
+    } catch (pushError) {
+      console.warn("Failed to send push notification:", pushError);
+      // Don't throw, continue with notification insert
+    }
     await sql`
             INSERT INTO notifications (user_id, debt_id, from_id, title, body) 
             VALUES (${debt[0].borrower_id}, ${debtId}, ${userId}, ${message.title}, ${message.body})

@@ -4,6 +4,8 @@ import {
   updateMyInfo,
   updatePushToken,
   searchUserByPhone,
+  markNotificationAsRead,
+  markAllNotificationsAsRead,
 } from "../controllers/userController.js";
 import express from "express";
 import { verifyToken } from "../middlewares/authMiddleware.js";
@@ -129,4 +131,42 @@ router.get("/search", verifyToken, searchUserByPhone);
  *         description: Dữ liệu không hợp lệ
  */
 router.post("/update-push-token", verifyToken, updatePushToken);
+
+/**
+ * @swagger
+ * /users/mark-notification-read/{id}:
+ *   put:
+ *     summary: Đánh dấu thông báo đã đọc
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Thành công
+ *       404:
+ *         description: Không tìm thấy thông báo
+ */
+
+/**
+ * @swagger
+ * /users/mark-all-notifications-read:
+ *   put:
+ *     summary: Đánh dấu tất cả thông báo đã đọc
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Thành công
+ */
+router.put("/mark-notification-read/:id", verifyToken, markNotificationAsRead);
+
+router.put("/mark-all-notifications-read", verifyToken, markAllNotificationsAsRead);
+
 export default router;

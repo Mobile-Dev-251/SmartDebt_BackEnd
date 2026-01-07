@@ -1,7 +1,7 @@
 import sql from "../config/db.js";
 
 export const getAllContactsService = async (userId) => {
-  const result = await sql`SELECT * FROM contacts WHERE user_id = ${userId}`;
+  const result = await sql`SELECT c.*, u.name FROM contacts c JOIN users u ON c.user_id_contact = u.id WHERE c.user_id = ${userId}`;
   return result;
 };
 
