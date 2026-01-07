@@ -87,7 +87,7 @@ const initReminderWorker = (sql) => {
         for (let chunk of chunks) {
           try {
             let tickets = await expo.sendPushNotificationsAsync(chunk);
-            console.log("Phản hồi từ Expo:", tickets);
+            //console.log("Phản hồi từ Expo:", tickets);
           } catch (error) {
             console.error("Lỗi khi gửi push notifications:", error);
           }
