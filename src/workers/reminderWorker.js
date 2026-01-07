@@ -12,9 +12,8 @@ const initReminderWorker = (sql) => {
       try {
         // 1. Truy vấn danh sách nợ đến hạn (sử dụng timezone Việt Nam)
         const rows = await sql`
-                SELECT d.id, d.amount, u.expo_push_token, lender.id as lender_id, lender.name as lender_name, lender.expo_push_token as lender_push_token, borrower.id as borrower_id, borrower.name as borrower_name
+                SELECT d.id, d.amount, borrower.expo_push_token, lender.id as lender_id, lender.name as lender_name, lender.expo_push_token as lender_push_token, borrower.id as borrower_id, borrower.name as borrower_name
                 FROM "debts" d
-                JOIN "users" u ON d.borrower_id = u.id
                 JOIN "users" lender ON d.lender_id = lender.id
                 JOIN "users" borrower ON d.borrower_id = borrower.id
                 WHERE d.status = 'OPEN' 

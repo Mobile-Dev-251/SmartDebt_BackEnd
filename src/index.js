@@ -70,7 +70,7 @@ app.use("/expenses", expenseRoutes);
 app.use("/contacts", contactRoutes);
 app.use("/groups", groupRoutes);
 app.use("/categories", categoryRoutes);
-initReminderWorker(sql);
+//initReminderWorker(sql);
 app.listen(port, '0.0.0.0', () => {
   console.log("Server is running on http://localhost:" + port);
 });
