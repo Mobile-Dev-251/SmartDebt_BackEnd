@@ -10,7 +10,7 @@ const initReminderWorker = (sql) => {
       console.log("--- Đang quét các khoản nợ cần nhắc nhở ---");
 
       try {
-        // 1. Truy vấn danh sách nợ đến hạn
+        // 1. Truy vấn danh sách nợ đến hạn (sử dụng timezone Việt Nam)
         const rows = await sql`
                 SELECT d.id, d.amount, u.expo_push_token, lender.id as lender_id, lender.name as lender_name, lender.expo_push_token as lender_push_token, borrower.id as borrower_id, borrower.name as borrower_name
                 FROM "debts" d
@@ -18,8 +18,8 @@ const initReminderWorker = (sql) => {
                 JOIN "users" lender ON d.lender_id = lender.id
                 JOIN "users" borrower ON d.borrower_id = borrower.id
                 WHERE d.status = 'OPEN' 
-                  AND CURRENT_DATE >= (d.due_date - d.remind_before)
-                  AND (d.last_reminded IS NULL OR d.last_reminded < CURRENT_DATE)
+                  AND CURRENT_DATE AT TIME ZONE 'Asia/Ho_Chi_Minh' >= (d.due_date - d.remind_before)
+                  AND (d.last_reminded IS NULL OR d.last_reminded < CURRENT_DATE AT TIME ZONE 'Asia/Ho_Chi_Minh')
             `;
 
         if (rows.length === 0) {
@@ -106,11 +106,11 @@ const initReminderWorker = (sql) => {
           }
         }
 
-        // Cập nhật last_reminded
+        // Cập nhật last_reminded (sử dụng timezone Việt Nam)
         const ids = rows.map((debt) => debt.id);
         await sql`
           UPDATE "debts" 
-          SET last_reminded = CURRENT_DATE 
+          SET last_reminded = CURRENT_DATE AT TIME ZONE 'Asia/Ho_Chi_Minh'
           WHERE id = ANY(${ids})
         `;
 
