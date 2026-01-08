@@ -20,4 +20,8 @@ APIs Documentation:
    ```bash
    http://localhost:3000/api-docs
    ```
+Deploy (sometime not accessible): 
 
+   ```bash
+   https://app-nodejs-smartdebt-backend-f5a5f6d5fteddea8.eastasia-01.azurewebsites.net/api-docs
+   ```
