@@ -18,7 +18,7 @@ const initReminderWorker = (sql) => {
                 JOIN "users" borrower ON d.borrower_id = borrower.id
                 WHERE d.status = 'OPEN' 
                   AND CURRENT_DATE AT TIME ZONE 'Asia/Ho_Chi_Minh' >= (d.due_date - d.remind_before)
-                  AND (d.last_reminded IS NULL OR d.last_reminded < CURRENT_DATE AT TIME ZONE 'Asia/Ho_Chi_Minh')
+                  AND (d.last_reminded IS NULL OR d.last_reminded < (CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Ho_Chi_Minh')::DATE)
             `;
 
         if (rows.length === 0) {
@@ -41,7 +41,7 @@ const initReminderWorker = (sql) => {
                 lenderId: debt.lender_id,
                 screen: "wallet",
                 receiveId: debt.borrower_id,
-                type: "debt_reminder_borrower"
+                type: "debt_reminder_borrower",
               },
             });
           }
@@ -57,7 +57,7 @@ const initReminderWorker = (sql) => {
                 borrowerId: debt.borrower_id,
                 screen: "wallet",
                 receiveId: debt.lender_id,
-                type: "debt_reminder_lender"
+                type: "debt_reminder_lender",
               },
             });
           }
@@ -69,7 +69,7 @@ const initReminderWorker = (sql) => {
             from_id: debt.lender_id,
             title: "Smart Debt - Nhắc nhở khoản nợ",
             body: `Bạn cần trả ${debt.amount} đồng đã mượn của ${debt.lender_name}`,
-            type: "REMINDER"
+            type: "REMINDER",
           });
 
           notifications.push({
@@ -78,7 +78,7 @@ const initReminderWorker = (sql) => {
             from_id: debt.borrower_id,
             title: "Smart Debt - Nhắc nhở khoản nợ",
             body: `${debt.borrower_name} cần trả bạn ${debt.amount} đồng`,
-            type: "REMINDER"
+            type: "REMINDER",
           });
         }
 
@@ -113,7 +113,9 @@ const initReminderWorker = (sql) => {
           WHERE id = ANY(${ids})
         `;
 
-        console.log(`Đã xử lý xong ${rows.length} khoản nợ, tạo ${notifications.length} thông báo.`);
+        console.log(
+          `Đã xử lý xong ${rows.length} khoản nợ, tạo ${notifications.length} thông báo.`
+        );
       } catch (dbError) {
         console.error("Lỗi truy vấn cơ sở dữ liệu:", dbError);
       }
