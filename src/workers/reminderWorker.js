@@ -109,7 +109,7 @@ const initReminderWorker = (sql) => {
         const ids = rows.map((debt) => debt.id);
         await sql`
           UPDATE "debts" 
-          SET last_reminded = CURRENT_DATE AT TIME ZONE 'Asia/Ho_Chi_Minh'
+          SET last_reminded = (NOW() AT TIME ZONE 'Asia/Ho_Chi_Minh')::date
           WHERE id = ANY(${ids})
         `;
 
