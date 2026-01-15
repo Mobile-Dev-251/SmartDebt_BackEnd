@@ -67,4 +67,45 @@ router.post("/login", handleAuthLogin);
  */
 router.post("/register", createNewUser);
 
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     AuthLoginDTO:
+ *       type: object
+ *       properties:
+ *         email:
+ *           type: string
+ *         password:
+ *           type: string
+ *       required:
+ *         - email
+ *         - password
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     AuthRegisterDTO:
+ *       type: object
+ *       properties:
+ *         full_name:
+ *           type: string
+ *         email:
+ *           type: string
+ *         phone:
+ *           type: string
+ *           format: phone
+ *         avatar_url:
+ *           type: string
+ *         password:
+ *           type: string
+ *       required:
+ *         - full_name
+ *         - email
+ *         - phone
+ *         - password
+ */
 export default router;

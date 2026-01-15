@@ -143,7 +143,6 @@ router.put("/:id", updateDebt);
  */
 router.put("/borrower-confirm/:debtId", verifyToken, borrowerConfirmDebt);
 
-
 /**
  * @swagger
  * /debts/mark-paid/{debtId}:
@@ -193,4 +192,31 @@ router.delete("/:id", deleteDebt);
 // router.get("/:id/payments", getDebtPayments);
 // router.post("/:id/payments", createDebtPayment);
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     DebtResponseDTO:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         lender_id:
+ *           type: integer
+ *         borrower_id:
+ *           type: integer
+ *         status:
+ *           type: string
+ *         title:
+ *           type: string
+ *         amount:
+ *           type: number
+ *         note:
+ *           type: string
+ *         due_date:
+ *           type: string
+ *           format: date
+ *         remind_before:
+ *           type: integer
+ */
 export default router;
